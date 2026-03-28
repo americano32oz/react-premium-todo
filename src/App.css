@@ -1,0 +1,47 @@
+.app-container {
+  max-width: 400px;
+  margin: 50px auto;
+  text-align: center;
+  font-family: sans-serif;
+}
+
+form {
+  display: flex;
+  margin-bottom: 20px;
+}
+
+input {
+  flex: 1;
+  padding: 10px;
+  font-size: 16px;
+}
+
+button {
+  padding: 10px 15px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+li span {
+  cursor: pointer;
+  flex: 1;
+  text-align: left;
+}
+
+li.completed span {
+  text-decoration: line-through;
+  color: #888;
+}
