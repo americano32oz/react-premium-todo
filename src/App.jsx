@@ -1,49 +1,61 @@
 import { useState, useEffect } from 'react';
+import { collection, onSnapshot, addDoc, updateDoc, doc, deleteDoc, query, orderBy } from 'firebase/firestore';
+import { db } from './firebase';
 import './index.css';
 
 function App() {
-  const [todos, setTodos] = useState(() => {
-    const savedTodos = localStorage.getItem('premium-todos');
-    if (savedTodos) {
-      return JSON.parse(savedTodos);
-    }
-    return [
-      { id: 1, text: '리액트 공부하기', completed: false },
-      { id: 2, text: '멋진 투두리스트 만들기', completed: true },
-      { id: 3, text: '운동하기', completed: false }
-    ];
-  });
+  const [todos, setTodos] = useState([]);
   const [inputValue, setInputValue] = useState('');
   const [filter, setFilter] = useState('all'); // 'all', 'active', 'completed'
 
   useEffect(() => {
-    localStorage.setItem('premium-todos', JSON.stringify(todos));
-  }, [todos]);
+    const q = query(collection(db, 'todos'), orderBy('createdAt', 'desc'));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const todosData = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+      setTodos(todosData);
+    }, (error) => {
+      console.error("Error fetching data: ", error);
+    });
+    return () => unsubscribe();
+  }, []);
 
-  const handleAddTodo = (e) => {
+  const handleAddTodo = async (e) => {
     e.preventDefault();
     if (!inputValue.trim()) return;
     
-    const newTodo = {
-      id: Date.now(),
-      text: inputValue.trim(),
-      completed: false
-    };
-    
-    setTodos([newTodo, ...todos]);
-    setInputValue('');
+    try {
+      await addDoc(collection(db, 'todos'), {
+        text: inputValue.trim(),
+        completed: false,
+        createdAt: Date.now()
+      });
+      setInputValue('');
+    } catch (error) {
+      console.error("Error adding document: ", error);
+      alert("할 일을 추가하는 중 오류가 발생했습니다. Firebase 설정을 확인해주세요.");
+    }
   };
 
-  const toggleTodo = (id) => {
-    setTodos(
-      todos.map(todo => 
-        todo.id === id ? { ...todo, completed: !todo.completed } : todo
-      )
-    );
+  const toggleTodo = async (id, currentStatus) => {
+    try {
+      const todoRef = doc(db, 'todos', id);
+      await updateDoc(todoRef, {
+        completed: !currentStatus
+      });
+    } catch (error) {
+      console.error("Error updating document: ", error);
+    }
   };
 
-  const deleteTodo = (id) => {
-    setTodos(todos.filter(todo => todo.id !== id));
+  const deleteTodo = async (id) => {
+    try {
+      await deleteDoc(doc(db, 'todos', id));
+    } catch (error) {
+      console.error("Error deleting document: ", error);
+    }
   };
 
   const filteredTodos = todos.filter(todo => {
@@ -99,12 +111,12 @@ function App() {
           <ul className="todo-list">
             {filteredTodos.map(todo => (
               <li key={todo.id} className={`todo-item ${todo.completed ? 'completed' : ''}`}>
-                <div className="todo-content" onClick={() => toggleTodo(todo.id)} style={{cursor: 'pointer'}}>
+                <div className="todo-content" onClick={() => toggleTodo(todo.id, todo.completed)} style={{cursor: 'pointer'}}>
                   <input 
                     type="checkbox" 
                     className="checkbox"
                     checked={todo.completed}
-                    onChange={() => toggleTodo(todo.id)}
+                    onChange={() => toggleTodo(todo.id, todo.completed)}
                     onClick={(e) => e.stopPropagation()}
                   />
                   <span className="todo-text">{todo.text}</span>

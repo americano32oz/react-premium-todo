@@ -1,47 +1,82 @@
-.app-container {
-  max-width: 400px;
-  margin: 50px auto;
-  text-align: center;
-  font-family: sans-serif;
-}
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
 
-form {
-  display: flex;
-  margin-bottom: 20px;
-}
+  .app-container {
+    max-width: 400px;
+    margin: 50px auto;
+    text-align: center;
+    font-family: sans-serif;
+  }
 
-input {
-  flex: 1;
-  padding: 10px;
-  font-size: 16px;
-}
+  .logo {
+    height: 6em;
+    padding: 1.5em;
+    will-change: filter;
+    transition: filter 300ms;
 
-button {
-  padding: 10px 15px;
-  font-size: 16px;
-  cursor: pointer;
-}
+    form {
+      display: flex;
+      margin-bottom: 20px;
+    }
 
-ul {
-  list-style: none;
-  padding: 0;
-}
+    .logo:hover {
+      filter: drop-shadow(0 0 2em #646cffaa);
 
-li {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px;
-  border-bottom: 1px solid #eee;
-}
+      input {
+        flex: 1;
+        padding: 10px;
+        font-size: 16px;
+      }
 
-li span {
-  cursor: pointer;
-  flex: 1;
-  text-align: left;
-}
+      .logo.react:hover {
+        filter: drop-shadow(0 0 2em #61dafbaa);
 
-li.completed span {
-  text-decoration: line-through;
-  color: #888;
-}
+        button {
+          padding: 10px 15px;
+          font-size: 16px;
+          cursor: pointer;
+        }
+
+        @keyframes logo-spin {
+          from {
+            transform: rotate(0deg);
+          }
+
+          to {
+            transform: rotate(360deg);
+          }
+
+          ul {
+            list-style: none;
+            padding: 0;
+          }
+
+          @media (prefers-reduced-motion: no-preference) {
+            a:nth-of-type(2) .logo {
+              animation: logo-spin infinite 20s linear;
+            }
+
+            li {
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              padding: 10px;
+              border-bottom: 1px solid #eee;
+            }
+
+            .card {
+              padding: 2em;
+
+              li span {
+                cursor: pointer;
+                flex: 1;
+                text-align: left;
+              }
+
+              .read-the-docs {
+                li.completed span {
+                  text-decoration: line-through;
+                  color: #888;
+                }
